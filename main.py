@@ -18,11 +18,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.le1 = QtWidgets.QLineEdit()
 
         self.file_path()
+
+        self.button1 = QtWidgets.QPushButton("New Folder")
+        self.generalLayout.addWidget(self.button1)
+        self.button1.pressed.connect(self.new_folder)
+
+        self.button2 = QtWidgets.QPushButton("Create Folders")
+        self.generalLayout.addWidget(self.button2)
+        self.button2.pressed.connect(self.create_files)
+
+        self.new_folder()
+        self.new_folder()
         self.new_folder()
 
-        self.button = QtWidgets.QPushButton("Create Folders")
-        self.generalLayout.addWidget(self.button)
-        self.button.pressed.connect(self.create_files)
 
 
 
@@ -56,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
             file_object.close()
 
 
-        print(self.le1.text())
+
 
 
 
