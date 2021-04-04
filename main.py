@@ -1,4 +1,5 @@
 import sys
+import os
 
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtWidgets import QApplication
@@ -46,7 +47,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def create_files(self):
-        path = self.le1.text()
+        path = self.le1.text() + "\\"
+        filename = self.le2.text()
+        if os.path.exists(path + filename):
+            print("Files Already Exist")
+        else:
+            file_object = open(path + filename, "a")
+            file_object.close()
+
 
         print(self.le1.text())
 
