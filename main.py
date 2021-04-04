@@ -35,6 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
+
     def file_path(self):
         self.le1 = QtWidgets.QLineEdit()
         self.le1.setFixedHeight(20)
@@ -62,25 +63,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             file_object = open(path + filename, "a")
             file_object.close()
-
-
-
-
-
-
-
-
-
-
-"""
-    def new_folder(self):
-        self.lineEdit.returnPressed.connect(self.user_input())
-        self.generalLayout.addWidget(self.lineEdit)
-
-    def user_input(self):
-        self.folder_input = self.lineEdit.text()
-
-"""
 
 
 
