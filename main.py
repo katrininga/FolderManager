@@ -14,36 +14,41 @@ class MainWindow(QtWidgets.QMainWindow):
         self.centralWidget = QtWidgets.QWidget()
         self.setCentralWidget(self.centralWidget)
         self.centralWidget.setLayout(self.generalLayout)
-        self.lineEdit = QtWidgets.QLineEdit()
-
+        self.le1 = QtWidgets.QLineEdit()
 
         self.file_path()
         self.new_folder()
-        self.new_folder()
-        self.new_folder()
-        self.create_files()
+
+        self.button = QtWidgets.QPushButton("Create Folders")
+        self.generalLayout.addWidget(self.button)
+        self.button.pressed.connect(self.create_files)
 
 
-    def new_folder(self):
-        """Create the display."""
-        self.display = QtWidgets.QLineEdit()
-        self.display.setFixedHeight(20)
-        self.display.setAlignment(QtCore.Qt.AlignRight)
-        self.generalLayout.addWidget(self.display)
+
 
     def file_path(self):
-        self.lineEdit = QtWidgets.QLineEdit()
-        self.lineEdit.setFixedHeight(20)
-        self.lineEdit.setAlignment(QtCore.Qt.AlignRight)
+        self.le1 = QtWidgets.QLineEdit()
+        self.le1.setFixedHeight(20)
+        self.le1.setAlignment(QtCore.Qt.AlignRight)
         self.path_layout = QtWidgets.QFormLayout()
-        self.path_layout.addRow("Folder Path: ", self.lineEdit)
+        self.path_layout.addRow("Folder Path: ", self.le1)
+        self.generalLayout.addLayout(self.path_layout)
+
+    def new_folder(self):
+        self.le2 = QtWidgets.QLineEdit()
+        self.le2.setFixedHeight(20)
+        self.le2.setAlignment(QtCore.Qt.AlignRight)
+        self.path_layout = QtWidgets.QFormLayout()
+        filename = "File: "
+        self.path_layout.addRow(filename, self.le2)
         self.generalLayout.addLayout(self.path_layout)
 
 
+
     def create_files(self):
-        self.button = QtWidgets.QPushButton("Create Folders")
-        #self.button.pressed.connect(self.execute_button)
-        self.generalLayout.addWidget(self.button)
+        path = self.le1.text()
+
+        print(self.le1.text())
 
 
 
@@ -60,8 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folder_input = self.lineEdit.text()
 
 """
-
-
 
 
 
