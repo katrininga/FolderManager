@@ -30,10 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.new_folder()
         self.new_folder()
         self.new_folder()
-
-
-
-
+        self.test()
 
 
     def file_path(self):
@@ -43,6 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.path_layout = QtWidgets.QFormLayout()
         self.path_layout.addRow("Folder Path: ", self.le1)
         self.generalLayout.addLayout(self.path_layout)
+
 
     def new_folder(self):
         self.le2 = QtWidgets.QLineEdit()
@@ -54,17 +52,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.generalLayout.addLayout(self.path_layout)
 
 
-
     def create_files(self):
         path = self.le1.text() + "\\"
         filename = self.le2.text()
-        if os.path.exists(path + filename):
-            print("Files Already Exist")
+        newpath = path + filename
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+
         else:
-            file_object = open(path + filename, "a")
-            file_object.close()
+            print("folder already exists")
 
 
+    def test(self):
+        for i in range(self.generalLayout.count()):
+            item = self.generalLayout.itemAt(i)
+            print(item)
 
 
 def main():
