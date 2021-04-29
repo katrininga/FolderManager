@@ -45,6 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         self.generalLayout.addLayout(self.path_layout)
+        self.generalLayout.addLayout(self.folder_layout)
 
         self.new_folder()
 
@@ -65,9 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         path_le.setAlignment(QtCore.Qt.AlignRight)
         foldername = "  Folder: "
 
-
         self.path_layout.addRow(foldername, path_le)
-        self.path_line_edits.append(path_le)
 
 
     def new_sub_folder(self):
@@ -81,7 +80,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def refreshAll(self):
-        #refreshing window. Removes all existing folder lineEdits and starts from scratch.
+        #TODO: refreshing window. Removes all existing folder lineEdits and starts from scratch.
         pass
 
 
