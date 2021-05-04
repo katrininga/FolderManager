@@ -1,6 +1,7 @@
 import sys
 import traceback
 import os
+import yaml
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -27,6 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # We need to create a list to store the line edits so each one remains its own object
         self.path_line_edits = list()
         self.folder_line_edits = list()
+        self.folder_dict = dict()
 
         self.folder_path()
 
@@ -43,6 +45,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.generalLayout.addWidget(self.createButton)
         self.createButton.pressed.connect(self.create_files)
 
+        self.createButton = QtWidgets.QPushButton("printTest")
+        self.generalLayout.addWidget(self.createButton)
+        self.createButton.pressed.connect(self.testtest)
 
         self.generalLayout.addLayout(self.path_layout)
         self.generalLayout.addLayout(self.folder_layout)
@@ -65,9 +70,10 @@ class MainWindow(QtWidgets.QMainWindow):
         path_le.setFixedHeight(20)
         path_le.setAlignment(QtCore.Qt.AlignRight)
         foldername = "  Folder: "
+        empty_value = ""
 
         self.path_layout.addRow(foldername, path_le)
-
+        self.folder_dict[path_le] = empty_value
 
     def new_sub_folder(self):
         sub_path_le = QtWidgets.QLineEdit()
@@ -76,23 +82,59 @@ class MainWindow(QtWidgets.QMainWindow):
         subfoldername = "       SubFolder: "
 
         self.path_layout.addRow(subfoldername, sub_path_le)
-        self.path_line_edits.append(sub_path_le)
+        parent_folder = list(self.folder_dict)[-1]
+        self.folder_dict[parent_folder] = sub_path_le
+
+
+    def testtest(self):
+        # Generally I convert anything from a line into str just to be safe as QT will sometimes return a QString which
+        # can be useful but in %99 of cases that I have experienced cause more issues than it solves
+        root_path = str(self.root_path_le.text())
+        # Here we can now iterate over the list of widgets we created as previously it was only referencing a single
+        # line edit
+
+
+
+        for k, v in self.folder_dict.items():
+            if v == "":
+                new_path = os.path.join(root_path, str(k.text())).replace('\\', '/')
+
+            else:
+                new_path = os.path.join(root_path, str(k.text()), str(v.text())).replace('\\', '/')
+
+            if not os.path.exists(new_path):
+                print('Creating path:', new_path)
+                try:
+                    os.makedirs(new_path)
+                except (IOError, PermissionError):
+                    print('Attempt to create directory failed:', new_path)
+                    traceback.print_exc()
+                    # The below is helpful to see exactly what the error encountered was
+                    # traceback.print_exc()
+
+
+
+
+            else:
+                # For debug prints like this it is good to add the data regarding what it tried so that in the event
+                # this is not expected behaviour you will know exactly what it was referring to
+                print("folder already exists:", new_path)
 
 
     def refreshAll(self):
         #TODO: refreshing window. Removes all existing folder lineEdits and starts from scratch.
         pass
 
-
+#TODO: this will only create one subfolder(value) per folder(key), need to replace dictionary with something else that can hold multiple subfolders per folder
     def create_files(self):
         # Generally I convert anything from a line into str just to be safe as QT will sometimes return a QString which
         # can be useful but in %99 of cases that I have experienced cause more issues than it solves
         root_path = str(self.root_path_le.text())
         # Here we can now iterate over the list of widgets we created as previously it was only referencing a single
         # line edit
-        for sub_path_le in self.path_line_edits:
+        for key in self.folder_dict:
             # I changed this to the os.path.join since it is IMO the best way to consolidate items into a path
-            new_path = os.path.join(root_path, str(sub_path_le.text())).replace('\\', '/')
+            new_path = os.path.join(root_path, str(key.text())).replace('\\', '/')
 
             if not os.path.exists(new_path):
                 print('Creating path:', new_path)
