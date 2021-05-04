@@ -1,7 +1,7 @@
 import sys
 import traceback
 import os
-import yaml
+
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -26,8 +26,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.root_sub_folder_le = QtWidgets.QLineEdit()
 
         # We need to create a list to store the line edits so each one remains its own object
-        self.path_line_edits = list()
-        self.folder_line_edits = list()
         self.folder_dict = dict()
 
         self.folder_path()
@@ -66,7 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         path_le.setFixedHeight(20)
         path_le.setAlignment(QtCore.Qt.AlignRight)
         foldername = "  Folder: "
-        empty_value = ""
+        empty_value = []
 
         self.path_layout.addRow(foldername, path_le)
         self.folder_dict[path_le] = empty_value
@@ -79,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.path_layout.addRow(subfoldername, sub_path_le)
         parent_folder = list(self.folder_dict)[-1]
-        self.folder_dict[parent_folder] = sub_path_le
+        self.folder_dict[parent_folder].append(sub_path_le)
 
 
     def create_files(self):
@@ -93,29 +91,35 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         for k, v in self.folder_dict.items():
-            if v == "":
+            new_path_list = []
+            if v == []:
                 new_path = os.path.join(root_path, str(k.text())).replace('\\', '/')
+                new_path_list.append(new_path)
 
             else:
-                new_path = os.path.join(root_path, str(k.text()), str(v.text())).replace('\\', '/')
+                for x in v:
+                    new_path = os.path.join(root_path, str(k.text()), str(x.text())).replace('\\', '/')
+                    new_path_list.append(new_path)
 
-            if not os.path.exists(new_path):
-                print('Creating path:', new_path)
-                try:
-                    os.makedirs(new_path)
-                except (IOError, PermissionError):
-                    print('Attempt to create directory failed:', new_path)
-                    traceback.print_exc()
-                    # The below is helpful to see exactly what the error encountered was
-                    # traceback.print_exc()
+            for new_path in new_path_list:
+                if not os.path.exists(new_path):
+                    print(new_path)
+                    print('Creating path:', new_path)
+                    try:
+                        os.makedirs(new_path)
+                    except (IOError, PermissionError):
+                        print('Attempt to create directory failed:', new_path)
+                        traceback.print_exc()
+                        #The below is helpful to see exactly what the error encountered was
+                        #traceback.print_exc()
 
 
 
 
-            else:
-                # For debug prints like this it is good to add the data regarding what it tried so that in the event
-                # this is not expected behaviour you will know exactly what it was referring to
-                print("folder already exists:", new_path)
+                else:
+                    # For debug prints like this it is good to add the data regarding what it tried so that in the event
+                    # this is not expected behaviour you will know exactly what it was referring to
+                    print("folder already exists:", new_path)
 
 
     def refreshAll(self):
