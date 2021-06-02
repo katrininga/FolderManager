@@ -31,13 +31,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.centralWidget)
         self.centralWidget.setLayout(self.generalLayout)
 
+        self.ItemList = []
 
         self.root_path_le = QtWidgets.QLineEdit()
 
         self.model = QtGui.QStandardItemModel()
-        self.addItems(self.model, data)
-        self.model.setHorizontalHeaderLabels([self.tr("Folders:")])
+
+
         self.tree = QtWidgets.QTreeView()
+        self.tree.setHeaderHidden(True)
+        self.rootNode = self.model.invisibleRootItem()
         self.tree.setModel(self.model)
         self.tree.setObjectName("tree")
         self.tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -56,64 +59,81 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folder_path()
 
 
-    def addItems(self, parent, elements):
 
-        for text, children in elements:
-            item = QtGui.QStandardItem(text)
-            parent.appendRow(item)
-            if children:
-                self.addItems(item, children)
 
 
     def on_context_menu(self, point):
         # show context menu
         menu = QtWidgets.QMenu()
-        menu.addAction(self.tr("Add Folder"))
-        menu.addAction(self.tr("Add Sub Folder"))
-        menu.exec_(self.tree.mapToGlobal(point))
+        actionFolder = menu.addAction(self.tr("Add Folder"))
+        actionSubFolder = menu.addAction(self.tr("Add Sub Folder"))
+        actionRemove = menu.addAction(self.tr("RemoveFolder"))
+        action = menu.exec_(self.tree.mapToGlobal(point))
+
+        if action == actionFolder:
+            Item = QtGui.QStandardItem()
+            Item.setText("NewFolder")
+            self.rootNode.appendRow(Item)
+            self.ItemList.append(Item)
+
+        if action == actionSubFolder:
+            index = self.tree.selectedIndexes()[0]
+            crawler = index.model().itemFromIndex(index)
+            Item = QtGui.QStandardItem()
+            Item.setText("NewFolder")
+            crawler.appendRow(Item)
+            self.ItemList.append(Item)
+            self.tree.setExpanded(index,True)
+
+        if action == actionRemove:
+            index = self.tree.selectedIndexes()[0]
+            self.tree.remove(index)
+
+
+
 
     def folder_path(self):
         self.root_path_le.setFixedHeight(20)
         self.root_path_le.setAlignment(QtCore.Qt.AlignRight)
         self.path_layout.addRow("Folder Path: ", self.root_path_le)
 
-    def new_folder(self):
-        path_le = QtWidgets.QLineEdit()
-        path_le.setFixedHeight(20)
-        path_le.setAlignment(QtCore.Qt.AlignRight)
-        foldername = "  Folder: "
-        empty_value = []
-
-        self.path_layout.addRow(foldername, path_le)
-        self.folder_dict[path_le] = empty_value
 
     def create_files(self):
-        root_path = str(self.root_path_le.text())
-        new_path_list = []
-        for x in data:
-            new_path = os.path.join(root_path,x).replace('\\', '/')
-            new_path_list.append(new_path)
+        print(self.tree)
+        #for x in self.ItemList:
+            #print(x)
 
-
-        for new_path in new_path_list:
-            if not os.path.exists(new_path):
-                print(new_path)
-                print('Creating path:', new_path)
-                try:
-                    os.makedirs(new_path)
-                except (IOError, PermissionError):
-                    print('Attempt to create directory failed:', new_path)
-                    traceback.print_exc()
-                    # The below is helpful to see exactly what the error encountered was
-                    # traceback.print_exc()
-
-
-
+"""        for k, v in self.folder_dict.items():
+            new_path_list = []
+            if v == []:
+                new_path = os.path.join(root_path, str(k.text())).replace('\\', '/')
+                new_path_list.append(new_path)
 
             else:
-                # For debug prints like this it is good to add the data regarding what it tried so that in the event
-                # this is not expected behaviour you will know exactly what it was referring to
-                print("folder already exists:", new_path)
+                for x in v:
+                    new_path = os.path.join(root_path, str(k.text()), str(x.text())).replace('\\', '/')
+                    new_path_list.append(new_path)
+
+            for new_path in new_path_list:
+                if not os.path.exists(new_path):
+                    print(new_path)
+                    print('Creating path:', new_path)
+                    try:
+                        os.makedirs(new_path)
+                    except (IOError, PermissionError):
+                        print('Attempt to create directory failed:', new_path)
+                        traceback.print_exc()
+                        # The below is helpful to see exactly what the error encountered was
+                        # traceback.print_exc()
+
+
+
+
+                else:
+                    # For debug prints like this it is good to add the data regarding what it tried so that in the event
+                    # this is not expected behaviour you will know exactly what it was referring to
+                    print("folder already exists:", new_path)
+"""
 
 
 
