@@ -6,15 +6,10 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 ROOT_PATH = r"C:\Users\katrin\PycharmProjects\FolderManager_00\Testing".replace("\\","/")
 
-data = [
-    ("Folder1",[
-        ("Subfolder1",[]),
-        ("Subfolder1",[
-            ("SubSubFolder1",[])
-        ])
-    ]),
-    ("Folder2",[("Subfolder2",[])])
-]
+#data = [("Folder1",[("Subfolder1",[]),("Subfolder1",[("SubSubFolder1",[])])]),("Folder2",[("Subfolder2",[])])]
+
+
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -31,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.centralWidget)
         self.centralWidget.setLayout(self.generalLayout)
 
-        self.ItemList = []
+        self.Data = []
 
         self.root_path_le = QtWidgets.QLineEdit()
 
@@ -47,7 +42,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tree.customContextMenuRequested.connect(self.on_context_menu)
 
 
-
         self.generalLayout.addWidget(self.tree)
 
         self.createButton = QtWidgets.QPushButton("Create Folders")
@@ -59,35 +53,44 @@ class MainWindow(QtWidgets.QMainWindow):
         self.folder_path()
 
 
-
-
-
     def on_context_menu(self, point):
         # show context menu
         menu = QtWidgets.QMenu()
-        actionFolder = menu.addAction(self.tr("Add Folder"))
-        actionSubFolder = menu.addAction(self.tr("Add Sub Folder"))
-        actionRemove = menu.addAction(self.tr("RemoveFolder"))
+        actionfolder = menu.addAction(self.tr("Add Folder"))
+        actionremove = menu.addAction(self.tr("RemoveFolder"))
         action = menu.exec_(self.tree.mapToGlobal(point))
 
-        if action == actionFolder:
+        if action == actionfolder:
             Item = QtGui.QStandardItem()
-            Item.setText("NewFolder")
-            self.rootNode.appendRow(Item)
-            self.ItemList.append(Item)
+            if self.tree.selectedIndexes():
+                index = self.tree.selectedIndexes()[0]
+                crawler = index.model().itemFromIndex(index)
+                Item.setText("NewFolder")
+                crawler.appendRow(Item)
+                self.tree.setExpanded(index, True)
+                self.tree.clearSelection()
+                self.Data.append(Item)
 
-        if action == actionSubFolder:
+
+            else:
+                Item.setText("NewFolder")
+                self.rootNode.appendRow(Item)
+                self.Data.append(Item)
+                self.tree.clearSelection()
+
+
+        if action == actionremove:
             index = self.tree.selectedIndexes()[0]
             crawler = index.model().itemFromIndex(index)
-            Item = QtGui.QStandardItem()
-            Item.setText("NewFolder")
-            crawler.appendRow(Item)
-            self.ItemList.append(Item)
-            self.tree.setExpanded(index,True)
+            if crawler.parent():
+                crawler.parent().removeRow(crawler.row())
+                self.Data.remove(crawler.parent())
+            else:
+                self.model.removeRow(crawler.row())
+                self.Data.remove(crawler)
 
-        if action == actionRemove:
-            index = self.tree.selectedIndexes()[0]
-            self.tree.remove(index)
+            self.tree.clearSelection()
+
 
 
 
@@ -99,11 +102,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def create_files(self):
-        print(self.tree)
-        #for x in self.ItemList:
-            #print(x)
+        for x in self.Data:
+            index = self.model.indexFromItem(x)
+            child = self.model.index(x.row(),x.column(),parent=index)
+            rowcount = self.model.rowCount(parent=index)
+            number = 0
+            if self.model.hasChildren(parent=index):
+                print(index.model().itemFromIndex(child))
 
-"""        for k, v in self.folder_dict.items():
+
+
+
+        """        for k, v in self.folder_dict.items():
             new_path_list = []
             if v == []:
                 new_path = os.path.join(root_path, str(k.text())).replace('\\', '/')
