@@ -16,7 +16,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__()
         # set central widget and layout
-        self.setWindowTitle("Katrins Amazing Folder Generator")
+        self.setWindowTitle("Oh Wow Amazing Folder Generator")
         self.generalLayout = QtWidgets.QVBoxLayout()
         self.path_layout = QtWidgets.QFormLayout()
         self.folder_layout = QtWidgets.QGridLayout()
@@ -32,66 +32,24 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.model = QtGui.QStandardItemModel()
 
-
         self.tree = QtWidgets.QTreeView()
         self.tree.setHeaderHidden(True)
         self.rootNode = self.model.invisibleRootItem()
         self.tree.setModel(self.model)
         self.tree.setObjectName("tree")
-        self.tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.tree.customContextMenuRequested.connect(self.on_context_menu)
 
 
         self.generalLayout.addWidget(self.tree)
 
         self.createButton = QtWidgets.QPushButton("Create Folders")
         self.generalLayout.addWidget(self.createButton)
-        self.createButton.pressed.connect(self.create_files)
+        self.createButton.pressed.connect(self.create_folders)
+
+        self.folders_widgets()
 
 
 
         self.folder_path()
-
-
-    def on_context_menu(self, point):
-        # show context menu
-        menu = QtWidgets.QMenu()
-        actionfolder = menu.addAction(self.tr("Add Folder"))
-        actionremove = menu.addAction(self.tr("RemoveFolder"))
-        action = menu.exec_(self.tree.mapToGlobal(point))
-
-        if action == actionfolder:
-            Item = QtGui.QStandardItem()
-            if self.tree.selectedIndexes():
-                index = self.tree.selectedIndexes()[0]
-                crawler = index.model().itemFromIndex(index)
-                Item.setText("NewFolder")
-                crawler.appendRow(Item)
-                self.tree.setExpanded(index, True)
-                self.tree.clearSelection()
-                self.Data.append(Item)
-
-
-            else:
-                Item.setText("NewFolder")
-                self.rootNode.appendRow(Item)
-                self.Data.append(Item)
-                self.tree.clearSelection()
-
-
-        if action == actionremove:
-            index = self.tree.selectedIndexes()[0]
-            crawler = index.model().itemFromIndex(index)
-            if crawler.parent():
-                crawler.parent().removeRow(crawler.row())
-                self.Data.remove(crawler.parent())
-            else:
-                self.model.removeRow(crawler.row())
-                self.Data.remove(crawler)
-
-            self.tree.clearSelection()
-
-
 
 
 
@@ -101,51 +59,115 @@ class MainWindow(QtWidgets.QMainWindow):
         self.path_layout.addRow("Folder Path: ", self.root_path_le)
 
 
-    def create_files(self):
-        for x in self.Data:
-            index = self.model.indexFromItem(x)
-            child = self.model.index(x.row(),x.column(),parent=index)
-            rowcount = self.model.rowCount(parent=index)
-            number = 0
-            if self.model.hasChildren(parent=index):
-                print(index.model().itemFromIndex(child))
+    def folders_widgets(self):
+        #self.folderdict = {self.ShotName:{self.footage, self.renders{self.nukeRender:{self.nukePrecomp}, self.blenderRenders},self.scripts:{self.blenderScripts, self.nukeRender}}}
+
+        self.shotName = QtGui.QStandardItem()
+        self.shotName.setText("Shot_Name")
+        self.rootNode.appendRow(self.shotName)
+        index = self.model.indexFromItem(self.shotName)
+        self.tree.setExpanded(index, True)
 
 
+        self.footage = QtGui.QStandardItem()
+        self.footage.setText("Footage")
+        self.footage.setEditable(False)
+        self.shotName.appendRow(self.footage)
+
+        self.renders = QtGui.QStandardItem()
+        self.renders.setText("Renders")
+        self.renders.setEditable(False)
+        self.shotName.appendRow(self.renders)
+        index = self.model.indexFromItem(self.renders)
+        self.tree.setExpanded(index, True)
+
+        self.blenderRenders = QtGui.QStandardItem()
+        self.blenderRenders.setText("Blender")
+        self.blenderRenders.setEditable(False)
+        self.renders.appendRow(self.blenderRenders)
+
+        self.PremiereRender = QtGui.QStandardItem()
+        self.PremiereRender.setText("Premier_Pro")
+        self.PremiereRender.setEditable(False)
+        self.renders.appendRow(self.PremiereRender)
+
+        self.nukeRender = QtGui.QStandardItem()
+        self.nukeRender.setText("Nuke")
+        self.nukeRender.setEditable(False)
+        self.renders.appendRow(self.nukeRender)
+        index = self.model.indexFromItem(self.nukeRender)
+        self.tree.setExpanded(index, True)
+
+        self.nukePrecomp = QtGui.QStandardItem()
+        self.nukePrecomp.setText("Precomp")
+        self.nukePrecomp.setEditable(False)
+        self.nukeRender.appendRow(self.nukePrecomp)
+
+        self.scripts = QtGui.QStandardItem()
+        self.scripts.setText("Scripts")
+        self.scripts.setEditable(False)
+        self.shotName.appendRow(self.scripts)
+        index = self.model.indexFromItem(self.scripts)
+        self.tree.setExpanded(index, True)
+
+        self.blenderScripts = QtGui.QStandardItem()
+        self.blenderScripts.setText("Blender")
+        self.blenderScripts.setEditable(False)
+        self.scripts.appendRow(self.blenderScripts)
+
+        self.nukeScripts = QtGui.QStandardItem()
+        self.nukeScripts.setText("Nuke")
+        self.nukeScripts.setEditable(False)
+        self.scripts.appendRow(self.nukeScripts)
 
 
-        """        for k, v in self.folder_dict.items():
-            new_path_list = []
-            if v == []:
-                new_path = os.path.join(root_path, str(k.text())).replace('\\', '/')
-                new_path_list.append(new_path)
+    def create_paths(self):
+        shotName = str(self.shotName.text())
+        rootpath = str(self.root_path_le.text())
+        if not rootpath:
+            print('Folder path is empty')
 
-            else:
-                for x in v:
-                    new_path = os.path.join(root_path, str(k.text()), str(x.text())).replace('\\', '/')
-                    new_path_list.append(new_path)
+        else:
+            rootpath = os.path.join(rootpath, shotName)
 
-            for new_path in new_path_list:
-                if not os.path.exists(new_path):
-                    print(new_path)
-                    print('Creating path:', new_path)
+            folderlist = ['Footage', 'Renders', 'Scripts']
+            subfolders = ['Nuke', 'Blender']
+            folderpaths = []
+
+            for x in folderlist:
+                newpath = os.path.join(rootpath,x).replace('\\','/')
+                folderpaths.append(newpath)
+                if x == "Renders":
+                    for y in subfolders:
+                        renderpath = os.path.join(newpath, y).replace('\\','/')
+                        folderpaths.append(renderpath)
+                        if y == 'Nuke':
+                            precomppath = os.path.join(renderpath,'Precomp').replace('\\','/')
+                            folderpaths.append(precomppath)
+
+                if x == "Scripts":
+                    for y in subfolders:
+                        scriptpath = os.path.join(newpath, y).replace('\\','/')
+                        folderpaths.append(scriptpath)
+
+
+            return folderpaths
+
+    def create_folders(self):
+        folderpaths = self.create_paths()
+
+        if folderpaths:
+            for path in folderpaths:
+                if not os.path.exists(path):
+                    print(path)
+                    print('Creating path:', path)
                     try:
-                        os.makedirs(new_path)
+                        os.makedirs(path)
                     except (IOError, PermissionError):
-                        print('Attempt to create directory failed:', new_path)
+                        print('Attempt to create directory failed:', path)
                         traceback.print_exc()
                         # The below is helpful to see exactly what the error encountered was
                         # traceback.print_exc()
-
-
-
-
-                else:
-                    # For debug prints like this it is good to add the data regarding what it tried so that in the event
-                    # this is not expected behaviour you will know exactly what it was referring to
-                    print("folder already exists:", new_path)
-"""
-
-
 
 
 def main():
