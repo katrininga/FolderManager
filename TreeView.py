@@ -4,9 +4,6 @@ import os
 from PySide2 import QtWidgets, QtCore, QtGui
 
 
-ROOT_PATH = r"C:\Users\katrin\PycharmProjects\FolderManager_00\Testing".replace("\\","/")
-
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
 
