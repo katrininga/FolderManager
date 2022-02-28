@@ -56,8 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def folders_widgets(self):
-        #self.folderdict = {self.ShotName:{self.footage, self.renders{self.nukeRender:{self.nukePrecomp}, self.blenderRenders},self.scripts:{self.blenderScripts, self.nukeRender}}}
-
+        #creating folder widgets
         self.shotName = QtGui.QStandardItem()
         self.shotName.setText("Shot_Name")
         self.rootNode.appendRow(self.shotName)
@@ -118,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def create_paths(self):
+        #creating paths that match folder widgets
         shotName = str(self.shotName.text())
         rootpath = str(self.root_path_le.text())
         if not rootpath:
@@ -150,6 +150,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return folderpaths
 
     def create_folders(self):
+        #creating folders
         folderpaths = self.create_paths()
 
         if folderpaths:
