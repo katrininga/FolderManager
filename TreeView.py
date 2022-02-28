@@ -6,10 +6,6 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 ROOT_PATH = r"C:\Users\katrin\PycharmProjects\FolderManager_00\Testing".replace("\\","/")
 
-#data = [("Folder1",[("Subfolder1",[]),("Subfolder1",[("SubSubFolder1",[])])]),("Folder2",[("Subfolder2",[])])]
-
-
-
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -86,10 +82,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.blenderRenders.setEditable(False)
         self.renders.appendRow(self.blenderRenders)
 
-        self.PremiereRender = QtGui.QStandardItem()
-        self.PremiereRender.setText("Premier_Pro")
-        self.PremiereRender.setEditable(False)
-        self.renders.appendRow(self.PremiereRender)
+        self.premiereRender = QtGui.QStandardItem()
+        self.premiereRender.setText("Premier_Pro")
+        self.premiereRender.setEditable(False)
+        self.renders.appendRow(self.premiereRender)
 
         self.nukeRender = QtGui.QStandardItem()
         self.nukeRender.setText("Nuke")
