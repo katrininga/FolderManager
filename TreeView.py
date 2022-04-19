@@ -10,6 +10,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__()
         #folder items
+        self.Nuke = QtGui.QStandardItem()
+        self.layers = QtGui.QStandardItem()
         self.scripts = QtGui.QStandardItem()
         self.renders = QtGui.QStandardItem()
         self.comprender = QtGui.QStandardItem()
@@ -61,9 +63,15 @@ class MainWindow(QtWidgets.QMainWindow):
     def createFolderWidgets(self):
         # creating folder widgets
 
+        self.Nuke.setText('Nuke')
+        self.Nuke.setEditable(False)
+        self.rootNode.appendRow(self.Nuke)
+        index = self.model.indexFromItem(self.Nuke)
+        self.tree.setExpanded(index, True)
+
         self.renders.setText('Renders')
         self.renders.setEditable(False)
-        self.rootNode.appendRow(self.renders)
+        self.Nuke.appendRow(self.renders)
         index = self.model.indexFromItem(self.renders)
         self.tree.setExpanded(index, True)
 
@@ -92,7 +100,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.scripts.setText('Scripts')
         self.scripts.setEditable(False)
-        self.rootNode.appendRow(self.scripts)
+        self.Nuke.appendRow(self.scripts)
+
+        self.layers.setText('Layers')
+        self.layers.setEditable(False)
+        self.Nuke.appendRow(self.layers)
 
 
 
