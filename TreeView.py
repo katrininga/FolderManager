@@ -10,16 +10,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__()
         #folder items
-        self.nukeScripts = QtGui.QStandardItem()
-        self.blenderScripts = QtGui.QStandardItem()
         self.scripts = QtGui.QStandardItem()
-        self.nukePrecomp = QtGui.QStandardItem()
-        self.nukeRender = QtGui.QStandardItem()
-        self.premiereRender = QtGui.QStandardItem()
-        self.blenderRenders = QtGui.QStandardItem()
         self.renders = QtGui.QStandardItem()
-        self.footage = QtGui.QStandardItem()
-        self.shotName = QtGui.QStandardItem()
+        self.comprender = QtGui.QStandardItem()
+        self.precomprender = QtGui.QStandardItem()
+        self.compVersion = QtGui.QStandardItem()
+        self.precompVersion = QtGui.QStandardItem()
+        self.Layers = QtGui.QStandardItem()
+
 
         #layouts
         self.setWindowTitle('Folder Generator')
@@ -62,66 +60,56 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createFolderWidgets(self):
         # creating folder widgets
-        self.shotName.setText('Shot_Name')
-        self.rootNode.appendRow(self.shotName)
-        index = self.model.indexFromItem(self.shotName)
-        self.tree.setExpanded(index, True)
-
-        self.footage.setText('Footage')
-        self.footage.setEditable(False)
-        self.shotName.appendRow(self.footage)
 
         self.renders.setText('Renders')
         self.renders.setEditable(False)
-        self.shotName.appendRow(self.renders)
+        self.rootNode.appendRow(self.renders)
         index = self.model.indexFromItem(self.renders)
         self.tree.setExpanded(index, True)
 
-        self.blenderRenders.setText('Blender')
-        self.blenderRenders.setEditable(False)
-        self.renders.appendRow(self.blenderRenders)
-
-        self.premiereRender.setText('Premier_Pro')
-        self.premiereRender.setEditable(False)
-        self.renders.appendRow(self.premiereRender)
-
-        self.nukeRender.setText('Nuke')
-        self.nukeRender.setEditable(False)
-        self.renders.appendRow(self.nukeRender)
-        index = self.model.indexFromItem(self.nukeRender)
+        self.comprender.setText('Comp')
+        self.comprender.setEditable(False)
+        self.renders.appendRow(self.comprender)
+        index = self.model.indexFromItem(self.comprender)
         self.tree.setExpanded(index, True)
 
-        self.nukePrecomp.setText('Precomp')
-        self.nukePrecomp.setEditable(False)
-        self.nukeRender.appendRow(self.nukePrecomp)
+        self.compVersion.setText('Comp_v0001')
+        self.compVersion.setEditable(False)
+        self.comprender.appendRow(self.compVersion)
+        index = self.model.indexFromItem(self.compVersion)
+        self.tree.setExpanded(index, True)
+
+        self.precomprender.setText('Precomp')
+        self.precomprender.setEditable(False)
+        self.renders.appendRow(self.precomprender)
+        index = self.model.indexFromItem(self.precomprender)
+        self.tree.setExpanded(index, True)
+
+        self.precompVersion.setText('Precomp_01')
+        self.precompVersion.setEditable(False)
+        self.precomprender.appendRow(self.precompVersion)
+        self.tree.setExpanded(index, True)
 
         self.scripts.setText('Scripts')
         self.scripts.setEditable(False)
-        self.shotName.appendRow(self.scripts)
-        index = self.model.indexFromItem(self.scripts)
-        self.tree.setExpanded(index, True)
+        self.rootNode.appendRow(self.scripts)
 
-        self.blenderScripts.setText('Blender')
-        self.blenderScripts.setEditable(False)
-        self.scripts.appendRow(self.blenderScripts)
 
-        self.nukeScripts.setText('Nuke')
-        self.nukeScripts.setEditable(False)
-        self.scripts.appendRow(self.nukeScripts)
+
 
     def getPaths(self):
         # creating paths that match folder widgets
-        shotName = str(self.shotName.text())
         rootpath = str(self.root_path_le.text())
 
         if not rootpath:
             print('Folder path is empty')
             return list()
 
-        rootPath = os.path.join(rootpath, shotName)
-        folders = {'Footage': list(),
-                   'Renders': ['Nuke/Precomp', 'Blender', 'Premiere Pro'],
-                   'Scripts': ['Nuke', 'Blender']
+        rootPath = os.path.join(rootpath)
+
+        folders = {
+                   'Renders': ['Comp\Comp_v0001', 'Precomp\Precomp_01'],
+                   'Scripts': ['Scripts']
                    }
 
         folderPaths = list()
